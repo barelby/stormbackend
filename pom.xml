@@ -75,6 +75,19 @@
         <artifactId>HikariCP</artifactId>
         <version>3.3.1</version>
       </dependency>
+      <dependency>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>3.8.0</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>42.2.5</version>
+      </dependency>
+
 
       <dependency>
             <groupId>org.jetbrains.exposed</groupId>
