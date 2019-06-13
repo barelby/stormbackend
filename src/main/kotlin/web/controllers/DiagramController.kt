@@ -11,8 +11,8 @@ class DiagramController(private val diagramService: DiagramService) {
     fun create(ctx: Context) {
        ctx.bodyValidator<DiagramDTO>()
            .check({!it.diagram?.body.isNullOrBlank()})
-           .get().diagram?.also {
-           diagramService.create(email = null, diagram = it).apply { ctx.json(DiagramDTO(this)) }
+           .get().diagram?.also { diagram ->
+           diagramService.create(ctx.attribute("email") , diagram).apply { ctx.json(DiagramDTO(this)) }
        }
     }
     fun findById(ctx: Context) {

@@ -38,7 +38,7 @@ private object Favorites : Table() {
 
 private object DiagramTags : Table() {
     val tag: Column<Long> = long("tag").primaryKey()
-    val id: Column<UUID> = Favorites.uuid("id").primaryKey()
+    val id: Column<UUID> = uuid("id").primaryKey()
 }
 
 
@@ -47,12 +47,14 @@ class DiagramRepository(private val dataSource: DataSource) {
         transaction(Database.connect(dataSource)) {
             SchemaUtils.createMissingTablesAndColumns(Diagrams)
             SchemaUtils.createMissingTablesAndColumns(Favorites)
+            SchemaUtils.createMissingTablesAndColumns(Tags)
             SchemaUtils.createMissingTablesAndColumns(DiagramTags)
         }
     }
 
     fun create(diagram: Diagram): Diagram? {
         val id = transaction(Database.connect(dataSource)) {
+            addLogger(StdOutSqlLogger)
             Diagrams.insertAndGetId { row ->
                 row[body] = diagram.body
                 row[title] = diagram.title!!
@@ -63,16 +65,19 @@ class DiagramRepository(private val dataSource: DataSource) {
             }
         }.value
 
-        diagram.tagList.map {tag ->
-            Tags.slice(Tags.id).select {Tags.name eq tag}
-                .map {row -> row[Tags.id].value}.firstOrNull() ?: Tags.insertAndGetId { it[name] = tag }.value
-        }.also {
-            DiagramTags.batchInsert(it) {
-                tagId ->
-                this[DiagramTags.tag] = tagId
-                this[DiagramTags.id] = id
+        transaction(Database.connect(dataSource)) {
+            addLogger(StdOutSqlLogger)
+            diagram.tagList.map { tag ->
+                Tags.slice(Tags.id).select { Tags.name eq tag }
+                    .map { row -> row[Tags.id].value }.firstOrNull() ?: Tags.insertAndGetId { it[name] = tag }.value
+            }.also {
+                DiagramTags.batchInsert(it) { tagId ->
+                    this[DiagramTags.tag] = tagId
+                    this[DiagramTags.id] = id
+                }
             }
         }
+
         return findById(id)
     }
 

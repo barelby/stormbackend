@@ -19,8 +19,8 @@ class Router(private val diagramController: DiagramController,
               post("login", userController::login, roles(Roles.ANYONE))
           }
       path("diagrams") {
-          post(diagramController::create)
-          get(diagramController::findById)
+          post(diagramController::create, roles(Roles.AUTHENTICATED))
+          get(diagramController::findById, rolesOptionalAuthenticated)
       }
 
       }

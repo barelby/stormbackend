@@ -11,11 +11,11 @@ class DiagramService(private val diagramRepository: DiagramRepository,
                      private val userRepository: UserRepository) {
 
   fun create(email: String?, diagram: Diagram): Diagram? {
-      email ?: throw BadRequestResponse("invalid user to create article")
+      email ?: throw BadRequestResponse("invalid user to create diagram")
 
 
       return userRepository.findByEmail(email).let { author ->
-          author ?: throw BadRequestResponse("invalid user to create article")
+          author ?: throw BadRequestResponse("invalid user to create diagram")
           diagramRepository.create(diagram.copy( author = author)) ?: throw InternalServerErrorResponse("Error create diagram")
 
       }

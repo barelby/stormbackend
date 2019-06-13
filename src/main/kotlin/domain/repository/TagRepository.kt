@@ -15,8 +15,9 @@ internal object Tags : LongIdTable() {
 class TagRepository(private val dataSource: DataSource) {
     init {
         transaction(Database.connect(dataSource)) {
+
             SchemaUtils.createMissingTablesAndColumns(Tags)
-        }
+            }
     }
 
     fun findAll(): List<String> {
