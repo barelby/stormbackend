@@ -2,18 +2,29 @@ package domain.service
 
 import domain.Diagram
 import domain.repository.DiagramRepository
+import domain.repository.UserRepository
 import io.javalin.BadRequestResponse
 import io.javalin.InternalServerErrorResponse
 import java.util.UUID
 
-class DiagramService(private val diagramRepository: DiagramRepository) {
+class DiagramService(private val diagramRepository: DiagramRepository,
+                     private val userRepository: UserRepository) {
 
-  fun create( uuid: String?, diagram: Diagram): Diagram? {
-      uuid ?: throw BadRequestResponse("invalid uuid")
-      return diagramRepository.create(diagram.copy(uuid = uuid, body =diagram.body)) ?: throw InternalServerErrorResponse("Error create diagram")
+  fun create(email: String?, diagram: Diagram): Diagram? {
+      email ?: throw BadRequestResponse("invalid user to create article")
+
+
+      return userRepository.findByEmail(email).let { author ->
+          author ?: throw BadRequestResponse("invalid user to create article")
+          diagramRepository.create(diagram.copy( author = author)) ?: throw InternalServerErrorResponse("Error create diagram")
+
+      }
+
+
+
   }
 
-    fun findById(uuid: String): Diagram? {
+    fun findById(uuid: UUID): Diagram? {
         return diagramRepository.findById(uuid)   }
 
 }

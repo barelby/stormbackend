@@ -6,6 +6,7 @@ import config.ModulesConfig.allModules
 import io.javalin.Javalin
 import io.javalin.JavalinEvent
 import io.javalin.json.JavalinJackson
+import io.javalin.security.AccessManager
 import org.h2.tools.Server
 import org.koin.core.KoinProperties
 import org.koin.standalone.KoinComponent
@@ -17,14 +18,16 @@ import java.text.SimpleDateFormat
 
 class AppConfig: KoinComponent {
     private val router: Router by inject()
-
+    private val authConfig: AuthConfig by inject()
 
     fun setup(): Javalin {
         StandAloneContext.startKoin(allModules,
             KoinProperties(true,true))
         return Javalin.create()
             .also { app ->
+
                 this.configureMapper()
+                authConfig.configure(app)
                 app.enableCorsForAllOrigins()
                     .contextPath(getProperty("context"))
                     .event(JavalinEvent.SERVER_STOPPING) {
