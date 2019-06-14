@@ -56,7 +56,14 @@
 
 
       </dependency>
-      <dependency>
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.9</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
         <groupId>org.koin</groupId>
         <artifactId>koin-core</artifactId>
         <version>1.0.2</version>

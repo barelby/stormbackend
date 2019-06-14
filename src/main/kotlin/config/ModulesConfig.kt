@@ -9,6 +9,7 @@ import org.koin.dsl.module.module
 import utils.JwtProvider
 import web.Router
 import web.controllers.DiagramController
+import web.controllers.ProfileController
 import web.controllers.TagController
 import web.controllers.UserController
 
@@ -20,12 +21,15 @@ object ModulesConfig {
         single {
             DbConfig(getProperty("jdbc.url"), getProperty("db.username"), getProperty("db.password")).getDataSource()
         }
-        single { Router(get(), get() )}
+        single { Router(get(), get(), get(), get() )}
     }
     private val userModule = module {
         single { UserController(get()) }
         single { UserService(get(), get()) }
         single { UserRepository(get()) }
+    }
+    private val profileModule = module {
+        single { ProfileController(get()) }
     }
     private val diagramModule = module {
         single { DiagramController(get()) }
@@ -40,5 +44,6 @@ object ModulesConfig {
     }
     internal val allModules = listOf(ModulesConfig.configModule, ModulesConfig.userModule,
         ModulesConfig.diagramModule,
+        ModulesConfig.profileModule,
         ModulesConfig.tagModule)
 }
