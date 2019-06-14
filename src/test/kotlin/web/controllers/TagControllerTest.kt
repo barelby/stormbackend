@@ -20,6 +20,7 @@ class TagControllerTest {
     fun start() {
         app = AppConfig().setup().start()
         http = HttpUtil(app.port())
+
     }
 
     @Test

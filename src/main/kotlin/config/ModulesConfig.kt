@@ -18,7 +18,7 @@ object ModulesConfig {
         single { AppConfig() }
         single { JwtProvider() }
         single { AuthConfig(get()) }
-        single {
+        single (override=true) {
             DbConfig(getProperty("jdbc.url"), getProperty("db.username"), getProperty("db.password")).getDataSource()
         }
         single { Router(get(), get(), get(), get() )}
